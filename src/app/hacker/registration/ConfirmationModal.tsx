@@ -8,6 +8,7 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
+import { Fireworks } from "@fireworks-js/react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -20,6 +21,27 @@ export default function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      {/* Fireworks overlay */}
+      {isOpen && (
+        <Fireworks
+          options={{
+            rocketsPoint: {
+              min: 50,
+              max: 50,
+            },
+          }}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 1000,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
       <ModalContent>
         {(onClose) => (
           <>

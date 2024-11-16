@@ -17,7 +17,8 @@ import {
 
 export interface HackathonData {
   name: string;
-  email: string;
+  email?: string;
+  hacker: string;
   githubLink: number;
   competitionName: string;
   requestedAmount: number;
@@ -26,8 +27,17 @@ export interface HackathonData {
   sponsorList: any[];
 }
 
+export interface SponsorFundedData {
+  hacker: string;
+  sponsor: string;
+}
+
 const query = gql`
   {
+    sponsorFundeds {
+      hacker
+      sponsor
+    }
     hackerRegistereds(first: 5) {
       id
       hacker
@@ -45,14 +55,22 @@ const url =
 export default function HackerDashboard() {
   // the data is already pre-fetched on the server and immediately available here,
   // without an additional network call
-  const { data } = useQuery<{ hackerRegistereds: HackathonData[] }>({
+  const { data } = useQuery<{
+    sponsorFundeds: SponsorFundedData[];
+    hackerRegistereds: HackathonData[];
+  }>({
     queryKey: ["data"],
     async queryFn() {
       return await request(url, query);
     },
   });
 
-  if (!data || !data.hackerRegistereds) return null;
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
+
+  const filteredSponsorFundeds = (hackerAddress: string) =>
+    data.sponsorFundeds.filter(
+      (sponsorFunded) => sponsorFunded.hacker === hackerAddress
+    );
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
@@ -91,7 +109,9 @@ export default function HackerDashboard() {
                   <TableCell>
                     {row.receivedAmount / row.requestedAmount}%
                   </TableCell>
-                  <TableCell>{row.sponsorList?.length}</TableCell>
+                  <TableCell>
+                    {filteredSponsorFundeds(row.hacker).length}
+                  </TableCell>
                   <TableCell>
                     <Button
                       size="sm"

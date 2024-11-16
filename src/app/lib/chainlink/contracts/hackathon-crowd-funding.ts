@@ -356,3 +356,29 @@ export const fetchHackerDetails = async (
     throw error;
   }
 };
+
+export const makeBooking = async (
+  bookingHash: string,
+  firstName: string,
+  lastName: string,
+  checkinDate: string,
+  checkoutDate: string,
+  signerOrProvider: ethers.Signer | ethers.Provider
+) => {
+  try {
+    const contract = getHackathonCrowdFundingContract(signerOrProvider);
+    // Call the `hackers` getter with the user's address
+    const bookingResponse = await contract.bookingAccomodation([
+      bookingHash,
+      firstName,
+      lastName,
+      checkinDate,
+      checkoutDate,
+    ]);
+
+    return bookingResponse;
+  } catch (error) {
+    console.error("Error fetching hacker details:", error);
+    throw error;
+  }
+};

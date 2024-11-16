@@ -56,6 +56,8 @@ const HotelDetailsRoomsSection = ({
 
 //   const { rateHawkSearchSpecifications } = useHotelSearchQueryParams();
 
+console.log("room groups data", roomGroups)
+
   useEffect(() => {
     if (!hotelId) {
       return;
@@ -82,7 +84,7 @@ const HotelDetailsRoomsSection = ({
         currency: "USD",
         guests: [{ adults: 1, children: [] }],
         name: "Test Hotel (Do Not Book)"};
-        
+
     const childrenAges: SetStateAction<number[]> =  [];
     const n_adults =  1;
 
@@ -98,32 +100,11 @@ const HotelDetailsRoomsSection = ({
 
 
   // Filter rates based on selected filters
-//   useEffect(() => {
-//     let filtered = rooms;
+  useEffect(() => {
+    let filtered = rooms;
 
-//     if (selectedFilters.includes(HotelRoomSearchFilter.FREE_CANCELLATION)) {
-//       filtered = filtered.filter(
-//         (rate) => rate.free_cancellation_before !== null,
-//       );
-//     }
-
-//     if (selectedFilters.includes(HotelRoomSearchFilter.BREAKFAST_INCLUDED)) {
-//       const freeBreakfastOptions = [
-//         "breakfast-for",
-//         "all-inclusive",
-//         "breakfast",
-//       ];
-//       filtered = filtered.filter(
-//         (rate) =>
-//           rate.meal &&
-//           rate.meal !== "no-meal" &&
-//           rate.meal !== "nomeal" &&
-//           freeBreakfastOptions.includes(rate.meal),
-//       );
-//     }
-
-//     setFilteredRates(filtered);
-//   }, [selectedFilters, rooms]);
+    setFilteredRates(filtered);
+  }, [selectedFilters, rooms]);
 
   const groupedRates = groupRatesByRoomType(filteredRates);
 
@@ -134,8 +115,9 @@ const HotelDetailsRoomsSection = ({
       <div className="h-[20px]"></div>
       <div className="flex flex-col gap-[8px]">
         {!isLoading &&
-          Object.keys(groupedRates).length > 0 &&
-          Object.keys(groupedRates).map((roomType, index) => (
+        // Object.keys(groupedRates)
+          roomGroups.length > 0 &&
+          roomGroups.map((roomType, index) => (
             <HotelDetailsRoomGroupCard
               key={index}
               roomGroup={groupedRates[roomType]}

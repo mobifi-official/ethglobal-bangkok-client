@@ -80,11 +80,13 @@ export default function HackerDashboard() {
     },
   });
 
+  console.log("data here", data)
 
-  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
+
+  // if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
-    data.sponsorFundeds.filter(
+    data?.sponsorFundeds?.filter(
       (sponsorFunded) => sponsorFunded.hacker === hackerAddress
     );
 
@@ -169,7 +171,7 @@ export default function HackerDashboard() {
         <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
       </TableHeader>
       <TableBody>
-        {data.map((row, index) => (
+        {data?.map((row, index) => (
           <TableRow key={index} className="table-body">
             <TableCell>{row.hackathonName}</TableCell>
             <TableCell>{row.travelBudget}</TableCell>
@@ -182,7 +184,8 @@ export default function HackerDashboard() {
             <TableCell>{row.numberOfSponsors}</TableCell>
             <TableCell>
               {row.status ===status.funded || row.status === status.not_funded ? (
-              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100} onClick={handleOpen}>
+              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`}  onClick={handleOpen}> 
+              {/* disabled={row.completenessProgress !== 100} */}
                 Book the Trip
               </Button>
               ) : (
@@ -270,7 +273,7 @@ export default function HackerDashboard() {
                     {row.receivedAmount / row.requestedAmount}%
                   </TableCell>
                   <TableCell>
-                    {filteredSponsorFundeds(row.hacker).length}
+                    {filteredSponsorFundeds(row.hacker)?.length}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -281,6 +284,7 @@ export default function HackerDashboard() {
                           : "table-button-text"
                       }`}
                       disabled={row.receivedAmount / row.requestedAmount < 100}
+                      onClick={handleOpen}
                     >
                       Book my Trip
                     </Button>

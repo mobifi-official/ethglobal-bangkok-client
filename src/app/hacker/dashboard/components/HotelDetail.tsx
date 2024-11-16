@@ -13,7 +13,6 @@ const HotelDetail = () => {
   const [details, setDetails] = useState<HotelDetails>({})
   const hotelId = 'test_hotel'
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://dev-api.mobifi.info/api/v2"
-  const [hotelImages, setHotelImages] = useState([])
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
@@ -36,7 +35,7 @@ const HotelDetail = () => {
           availability: availabilityResponse.data
         })
       } catch (error) {
-        console.error("Error fetching hotel details:", error)
+        console.error("Error fetching hotel details small change:", error)
       }
     }
 
@@ -52,14 +51,11 @@ const HotelDetail = () => {
   return (
     <div>
       <h1>Hotel Details</h1>
+      <p className="text-[18px]">{details.info?.name}<span className="text-[12px] text-gray-500">{details.info?.address}</span></p>
       <HotelImageGallery isLoading={!details.info || !details.availability} hotelImages={details?.info?.images.map((image: string) =>
       replaceSizeInUrl(image, ImageSize.Fit1024x768),
     )} />
       <HotelDetailsRoomsSection hotelId='test_hotel' searchType='hotel' roomGroups={details?.info?.roomGroups || details?.info?.room_groups} />
-      {/* <h2>Hotel Info</h2>
-      <pre>{JSON.stringify(details.info, null, 2)}</pre>
-      <h2>Availability Info</h2>
-      <pre>{JSON.stringify(details.availability, null, 2)}</pre> */}
     </div>
   )
 }

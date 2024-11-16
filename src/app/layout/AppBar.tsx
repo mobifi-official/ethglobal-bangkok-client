@@ -10,8 +10,13 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import LoginStatusComponent from "../features/authentication/components/LoginStatusComponent";
+import NotificationModal from "./NotificationList";
+import { useState } from "react";
+import { useAccount } from "wagmi";
 
 export default function AppBar() {
+  const { address } = useAccount();
+
   return (
     <Navbar className="h-[170px]">
       <NavbarBrand>
@@ -26,6 +31,10 @@ export default function AppBar() {
           >
             Fund My Trip
           </Button>
+          
+        </NavbarItem>
+        <NavbarItem>
+          <NotificationModal userAddress={address} />
         </NavbarItem>
         <NavbarItem>
           <LoginStatusComponent />

@@ -7,6 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export default function ConfirmationModal({
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onPress={onClose}>
-                Cool
+                <Link href="/hacker/dashboard">Cool!</Link>
               </Button>
             </ModalFooter>
           </>

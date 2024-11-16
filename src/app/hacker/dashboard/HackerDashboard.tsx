@@ -47,20 +47,34 @@ export default function HackerDashboard() {
       completenessProgress: 75,
       numberOfSponsors: 8
     },
+    {
+        hackathonName: "Example Hackathon",
+        travelBudget: "$300",
+        completeness: 75,
+        completenessProgress: 75,
+        numberOfSponsors: 8
+      },
+      {
+        hackathonName: "Example Hackathon",
+        travelBudget: "$300",
+        completeness: 75,
+        completenessProgress: 75,
+        numberOfSponsors: 8
+      },
   ]
 
   const renderTable = (data: typeof fundraisingData) => (
-    <Table aria-label="Hackathon details table" className="mt-4 table-title bg-white">
+    <Table aria-label="Hackathon details table" className="mt-4  bg-white">
       <TableHeader className="table-title">
-        <TableColumn>HACKATHON NAME</TableColumn>
-        <TableColumn>TRAVEL BUDGET</TableColumn>
-        <TableColumn>COMPLETENESS</TableColumn>
-        <TableColumn>NUMBER OF SPONSORS</TableColumn>
+        <TableColumn className="table-title lowercase">HACKATHON NAME</TableColumn>
+        <TableColumn className="table-title lowercase">TRAVEL BUDGET</TableColumn>
+        <TableColumn className="table-title lowercase">COMPLETENESS</TableColumn>
+        <TableColumn className="table-title lowercase">NUMBER OF SPONSORS</TableColumn>
         <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
       </TableHeader>
-      <TableBody>
+      <TableBody >
         {data.map((row, index) => (
-          <TableRow key={index}>
+          <TableRow key={index} className="table-body">
             <TableCell>{row.hackathonName}</TableCell>
             <TableCell>{row.travelBudget}</TableCell>
             <TableCell>
@@ -70,7 +84,7 @@ export default function HackerDashboard() {
             </TableCell>
             <TableCell>{row.numberOfSponsors}</TableCell>
             <TableCell>
-              <Button  size="sm" className="table-button-text shadow-md bg-white">
+              <Button  size="sm" className={` shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100}>
                 Book my Trip
               </Button>
             </TableCell>
@@ -87,14 +101,28 @@ export default function HackerDashboard() {
             <h1 className="table-title">Trip and Sponsorships</h1>
         </div>
       
-      <Tabs aria-label="Hackathon tabs" className="w-full">
-        <Tab key="fundraising" title="My Fundraising Trip">
+        <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth >
+        <Tab key="fundraising" title="My Fundraising Trip" className="font-londrina">
           {renderTable(fundraisingData)}
         </Tab>
-        <Tab key="sponsored" title="My Sponsored Hackathon">
+        <Tab key="sponsored" title="My Sponsored Hackathon" className="font-londrina">
           {renderTable(sponsoredData)}
         </Tab>
       </Tabs>
+      <style jsx>{`
+        :global(.nextui-tabs-panel) {
+          width: 100%;
+        }
+        :global(.nextui-tabs-tablist) {
+          width: 100%;
+        }
+        :global(.nextui-tabs-tab[data-selected=true]) {
+          background-color: white !important;
+        }
+        :global(.nextui-tabs-tab) {
+          flex: 1;
+        }
+      `}</style>
     </div>
   )
 }

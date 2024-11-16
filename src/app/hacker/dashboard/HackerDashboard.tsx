@@ -11,6 +11,8 @@ import {
   Tab,
   Button,
 } from "@nextui-org/react"
+import glasses from '../../../../public/glasses_1.svg'
+import Image from "next/image"
 
 export default function HackerDashboard() {
   const fundraisingData = [
@@ -48,7 +50,7 @@ export default function HackerDashboard() {
   ]
 
   const renderTable = (data: typeof fundraisingData) => (
-    <Table aria-label="Hackathon details table" className="mt-4 table-title">
+    <Table aria-label="Hackathon details table" className="mt-4 table-title bg-white">
       <TableHeader className="table-title">
         <TableColumn>HACKATHON NAME</TableColumn>
         <TableColumn>TRAVEL BUDGET</TableColumn>
@@ -68,7 +70,7 @@ export default function HackerDashboard() {
             </TableCell>
             <TableCell>{row.numberOfSponsors}</TableCell>
             <TableCell>
-              <Button color="primary" size="sm">
+              <Button  size="sm" className="table-button-text shadow-md bg-white">
                 Book my Trip
               </Button>
             </TableCell>
@@ -80,7 +82,11 @@ export default function HackerDashboard() {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
-      <h1 className="table-title mb-6">Trip and Sponsorships</h1>
+        <div className="flex flex-row gap-2 items-center justify-start p-4">
+            <Image src={glasses} height={18} width={30} alt="glasses" />
+            <h1 className="table-title">Trip and Sponsorships</h1>
+        </div>
+      
       <Tabs aria-label="Hackathon tabs" className="w-full">
         <Tab key="fundraising" title="My Fundraising Trip">
           {renderTable(fundraisingData)}

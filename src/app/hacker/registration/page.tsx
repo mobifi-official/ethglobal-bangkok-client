@@ -75,7 +75,12 @@ const HackerRegistration = () => {
       <h1 className="text-3xl mb-10 font-bold">Hacker Registration</h1>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <div className="flex items-center gap-2">
-          <Image src="/glasses_1.svg" alt="logo" width={50} height={50} />
+          <Image
+            src="/glasses_1.svg"
+            alt="Hacker Detail"
+            width={50}
+            height={50}
+          />
           <h2>Hacker Detail</h2>
         </div>
         <Input
@@ -105,8 +110,13 @@ const HackerRegistration = () => {
           required
         />
         <div className="flex items-center gap-2">
-          <Image src="/glasses_2.svg" alt="logo" width={50} height={50} />
-          <h2>Hacker Detail</h2>
+          <Image
+            src="/glasses_2.svg"
+            alt="Founding Detail"
+            width={50}
+            height={50}
+          />
+          <h2>Founding Detail</h2>
         </div>
 
         <Input

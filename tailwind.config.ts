@@ -14,6 +14,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        'londrina': ['Londrina Solid', 'cursive'],
+      },
     },
   },
   plugins: [nextui()],

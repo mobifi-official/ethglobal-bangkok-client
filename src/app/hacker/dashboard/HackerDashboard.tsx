@@ -1,5 +1,10 @@
-'use client'
+"use client";
 
+import { Tabs, Tab } from "@nextui-org/react";
+import glasses from "../../../../public/glasses_1.svg";
+import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { gql, request } from "graphql-request";
 import {
   Table,
   TableHeader,
@@ -7,94 +12,96 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Tabs,
-  Tab,
   Button,
-} from "@nextui-org/react"
-import glasses from '../../../../public/glasses_1.svg'
-import Image from "next/image"
+} from "@nextui-org/react";
+
+export interface HackathonData {
+  name: string;
+  email: string;
+  githubLink: number;
+  competitionName: string;
+  requestedAmount: number;
+  receivedAmount: number;
+  prizePercentageForSponsor: number;
+  sponsorList: any[];
+}
+
+const query = gql`
+  {
+    hackerRegistereds(first: 5) {
+      id
+      hacker
+      competitionName
+      name
+      requestedAmount
+      receivedAmount
+      prizePercentageForSponsor
+    }
+  }
+`;
+const url =
+  "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
 
 export default function HackerDashboard() {
-  const fundraisingData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      travelBudget: "$500",
-      completeness: 100,
-      completenessProgress: 100,
-      numberOfSponsors: 4
+  // the data is already pre-fetched on the server and immediately available here,
+  // without an additional network call
+  const { data } = useQuery<{ hackerRegistereds: HackathonData[] }>({
+    queryKey: ["data"],
+    async queryFn() {
+      return await request(url, query);
     },
-    {
-        hackathonName: "ETHGlobal BangKok",
-        travelBudget: "$400",
-        completeness: 100,
-        completenessProgress: 70,
-        numberOfSponsors: 1
-      },
-      {
-        hackathonName: "ETHGlobal BangKok",
-        travelBudget: "$500",
-        completeness: 100,
-        completenessProgress: 20,
-        numberOfSponsors: 0
-      },
-  ]
+  });
 
-  const sponsoredData = [
-    {
-      hackathonName: "Example Hackathon",
-      travelBudget: "$300",
-      completeness: 75,
-      completenessProgress: 75,
-      numberOfSponsors: 8
-    },
-  ]
-
-  const renderTable = (data: typeof fundraisingData) => (
-    <Table aria-label="Hackathon details table" className="mt-4 table-title bg-white">
-      <TableHeader className="table-title">
-        <TableColumn>HACKATHON NAME</TableColumn>
-        <TableColumn>TRAVEL BUDGET</TableColumn>
-        <TableColumn>COMPLETENESS</TableColumn>
-        <TableColumn>NUMBER OF SPONSORS</TableColumn>
-        <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index}>
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <span>{row.completenessProgress}%</span>
-              </div>
-            </TableCell>
-            <TableCell>{row.numberOfSponsors}</TableCell>
-            <TableCell>
-              <Button  size="sm" className="table-button-text shadow-md bg-white">
-                Book my Trip
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
+  if (!data || !data.hackerRegistereds) return null;
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
-        <div className="flex flex-row gap-2 items-center justify-start p-4">
-            <Image src={glasses} height={18} width={30} alt="glasses" />
-            <h1 className="table-title">Trip and Sponsorships</h1>
-        </div>
-      
+      <div className="flex flex-row gap-2 items-center justify-start p-4">
+        <Image src={glasses} height={18} width={30} alt="glasses" />
+        <h1 className="table-title">Trip and Sponsorships</h1>
+      </div>
+
       <Tabs aria-label="Hackathon tabs" className="w-full">
         <Tab key="fundraising" title="My Fundraising Trip">
-          {renderTable(fundraisingData)}
+          <Table
+            aria-label="Hackathon details table"
+            className="mt-4 table-title bg-white"
+          >
+            <TableHeader className="table-title">
+              <TableColumn>HACKER NAME</TableColumn>
+              <TableColumn>COMPETITION NAME</TableColumn>
+              <TableColumn>TRAVEL BUDGET</TableColumn>
+              <TableColumn>COMPLETENESS</TableColumn>
+              <TableColumn>NUMBER OF SPONSORS</TableColumn>
+              <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {data.hackerRegistereds.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.competitionName}</TableCell>
+                  <TableCell>{row.requestedAmount}</TableCell>
+                  <TableCell>
+                    {row.receivedAmount / row.requestedAmount}%
+                  </TableCell>
+                  <TableCell>{row.sponsorList?.length}</TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      className="table-button-text shadow-md bg-white"
+                    >
+                      Book my Trip
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Tab>
         <Tab key="sponsored" title="My Sponsored Hackathon">
-          {renderTable(sponsoredData)}
+          {/* <DataTable data={sponsoredData} /> */}
         </Tab>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -81,9 +81,9 @@ export default function HackerDashboard() {
   });
 
 
-  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
-    <div>No data available</div>
-  );
+  // if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
+  //   <div>No data available</div>
+  // );
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
     data?.sponsorFundeds?.filter(
@@ -287,7 +287,7 @@ export default function HackerDashboard() {
                           ? "table-button-text-disabled"
                           : "table-button-text"
                       }`}
-                      disabled={row.receivedAmount / row.requestedAmount < 100}
+                      // disabled={row.receivedAmount / row.requestedAmount < 100}
                       onClick={handleOpen}
                     >
                       Book my Trip

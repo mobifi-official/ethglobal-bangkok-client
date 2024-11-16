@@ -1,19 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo, SetStateAction } from "react";
-// import HotelDetailsRoomGroupCard from "./HotelDetailsRoomGroupCard";
-
-// import { Rate } from "@/app/booking/hotels/models/hotel-offers-response";
-// import { useHotelBookingService } from "../../context/HotelBookingServiceContext";
-// import { ItemNotFoundContainer } from "@/app/components/ui/item-not-found";
-// import {
-//   groupRatesByRoomType,
-//   integrateImagesIntoRates,
-// } from "../../utils/hotel-rooms-utils";
-// import { useHotelSearchQueryParams } from "../../hooks/useHotelSearchQueryParams";
 import { ImageSize, replaceSizeInUrl } from "@/app/features/utils/url-utlis";
 import HotelDetailsRoomGroupCard from "./HotelDetailsRoomGroupCard";
-import { groupRatesByRoomType } from "@/app/features/utils/hotel-rooms-utils";
+import { groupRatesByRoomType, integrateImagesIntoRates } from "@/app/features/utils/hotel-rooms-utils";
 
 interface Props {
   roomGroups: any[];
@@ -22,6 +12,7 @@ interface Props {
   searchType: string;
   accessLocation?: "general" | "modal";
   addTopPadding?: boolean;
+  rates: []
 }
 
 interface RateHawkHotelSearchSpecifications {
@@ -40,6 +31,7 @@ const HotelDetailsRoomsSection = ({
   searchType,
   addTopPadding = true,
   accessLocation = "general",
+  rates
 }: Props) => {
   const [rooms, setRooms] = useState<any[]>([]);
   const [filteredRates, setFilteredRates] = useState<any[]>([]);
@@ -51,30 +43,16 @@ const HotelDetailsRoomsSection = ({
   const [checkOutDate, setCheckOutDate] = useState<string | null>();
   const [numberOfRooms, setNumberOfRooms] = useState<number>(1);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-//   const hotelBookingService = useHotelBookingService();
 
+  console.log("rates data", rates)
 
-//   const { rateHawkSearchSpecifications } = useHotelSearchQueryParams();
-
-console.log("room groups data", roomGroups)
 
   useEffect(() => {
-    if (!hotelId) {
-      return;
-    }
-
     const getRooms = async () => {
-      if (!hotelId) {
-        return;
-      }
-      setIsLoading(true);
-    //   const rates = await hotelBookingService?.retrieveRoomsForHotel({
-    //     hotelId: hotelId,
-    //     searchParams: rateHawkSearchSpecifications,
-    //   });
-    //   const ratesWithImages = integrateImagesIntoRates(rates, roomGroups);
-    //   setIsLoading(false);
-    //   setRooms(ratesWithImages);
+      // setIsLoading(true);
+      const ratesWithImages = integrateImagesIntoRates(rates, roomGroups);
+      // setIsLoading(false);
+      setRooms(ratesWithImages);
     };
 
     const { guests }: RateHawkHotelSearchSpecifications =
@@ -94,7 +72,7 @@ console.log("room groups data", roomGroups)
     setCheckOutDate("2024-11-24");
 
     getRooms();
-  }, [ roomGroups]);
+  }, [ roomGroups, rates]);
 
 
 
@@ -106,7 +84,11 @@ console.log("room groups data", roomGroups)
     setFilteredRates(filtered);
   }, [selectedFilters, rooms]);
 
+  console.log("rooms--------", rooms)
+
   const groupedRates = groupRatesByRoomType(filteredRates);
+
+  console.log("room groups here", groupedRates)
 
 
   return (
@@ -114,10 +96,10 @@ console.log("room groups data", roomGroups)
       <div className={`${addTopPadding ? `pt-[40px]` : `pt-0`}`}></div>
       <div className="h-[20px]"></div>
       <div className="flex flex-col gap-[8px]">
-        {!isLoading &&
+        {
         // Object.keys(groupedRates)
-          roomGroups.length > 0 &&
-          roomGroups.map((roomType, index) => (
+        Object.keys(groupedRates).length > 0 &&
+        Object.keys(groupedRates).map((roomType, index) => (
             <HotelDetailsRoomGroupCard
               key={index}
               roomGroup={groupedRates[roomType]}

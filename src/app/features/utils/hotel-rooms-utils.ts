@@ -49,6 +49,7 @@ function integrateImagesIntoRates(rates: any[], roomGroups: any): any[] {
     return rates.map((rate: { rg_ext: any; }) => {
         const rateKey = rate.rg_ext;
         const matchedGroup = roomGroupMap.find((group: { key: any; }) => deepEqual(group.key, rateKey));
+        console.log("matched group", matchedGroup)
         const images = matchedGroup ? matchedGroup.images : [];
 
         return {

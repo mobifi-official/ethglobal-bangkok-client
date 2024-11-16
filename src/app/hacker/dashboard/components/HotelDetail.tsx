@@ -42,7 +42,7 @@ const HotelDetail = () => {
     fetchHotelDetails()
   }, [baseUrl, hotelId])
 
-  console.log("info details", details?.info)
+  console.log("info details", details?.availability)
 
   if (!details.info || !details.availability) {
     return <div>Loading...</div>
@@ -55,7 +55,7 @@ const HotelDetail = () => {
       <HotelImageGallery isLoading={!details.info || !details.availability} hotelImages={details?.info?.images.map((image: string) =>
       replaceSizeInUrl(image, ImageSize.Fit1024x768),
     )} />
-      <HotelDetailsRoomsSection hotelId='test_hotel' searchType='hotel' roomGroups={details?.info?.roomGroups || details?.info?.room_groups} />
+      <HotelDetailsRoomsSection hotelId='test_hotel' searchType='hotel' roomGroups={details?.info?.roomGroups || details?.info?.room_groups} rates={details?.availability?.hotels[0]?.rates ?? []} />
     </div>
   )
 }

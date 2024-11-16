@@ -26,16 +26,24 @@ export default function AppBar() {
         </Link>
       </NavbarBrand>
 
-      <NavbarContent justify="center">
+      {/* <NavbarContent justify="center">
         <Link className="text-black hover:underline" href="/hacker/dashboard">
           Dashboard
         </Link>
-      </NavbarContent>
+      </NavbarContent> */}
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
+      <NavbarItem className="hidden lg:flex">
           <Button
             className="font-bold bg-white drop-shadow-lg font-londrina text-[25px]"
             onClick={() => router.push("/hacker/dashboard")}
+          >
+            Dashboard
+          </Button>
+        </NavbarItem>
+        <NavbarItem className="hidden lg:flex">
+          <Button
+            className="font-bold bg-white drop-shadow-lg font-londrina text-[25px]"
+            onClick={() => router.push("/sponsor/dashboard")}
           >
             Sponsor Hacker
           </Button>

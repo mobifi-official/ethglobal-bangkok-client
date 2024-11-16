@@ -61,23 +61,30 @@ export default function HackerDashboard() {
         <h1 className="table-title">Trip and Sponsorships</h1>
       </div>
 
-      <Tabs aria-label="Hackathon tabs" className="w-full">
+      <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
         <Tab key="fundraising" title="My Fundraising Trip">
-          <Table
-            aria-label="Hackathon details table"
-            className="mt-4 table-title bg-white"
-          >
+          <Table aria-label="Hackathon details table" className="mt-4 bg-white">
             <TableHeader className="table-title">
-              <TableColumn>HACKER NAME</TableColumn>
-              <TableColumn>COMPETITION NAME</TableColumn>
-              <TableColumn>TRAVEL BUDGET</TableColumn>
-              <TableColumn>COMPLETENESS</TableColumn>
-              <TableColumn>NUMBER OF SPONSORS</TableColumn>
+              <TableColumn className="table-title lowercase">
+                HACKER NAME
+              </TableColumn>
+              <TableColumn className="table-title lowercase">
+                COMPETITION NAME
+              </TableColumn>
+              <TableColumn className="table-title lowercase">
+                TRAVEL BUDGET
+              </TableColumn>
+              <TableColumn className="table-title lowercase">
+                COMPLETENESS
+              </TableColumn>
+              <TableColumn className="table-title lowercase">
+                NUMBER OF SPONSORS
+              </TableColumn>
               <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
             </TableHeader>
             <TableBody>
               {data.hackerRegistereds.map((row, index) => (
-                <TableRow key={index}>
+                <TableRow key={index} className="table-body">
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.competitionName}</TableCell>
                   <TableCell>{row.requestedAmount}</TableCell>
@@ -88,7 +95,12 @@ export default function HackerDashboard() {
                   <TableCell>
                     <Button
                       size="sm"
-                      className="table-button-text shadow-md bg-white"
+                      className={` shadow-md bg-white ${
+                        row.receivedAmount / row.requestedAmount < 100
+                          ? "table-button-text-disabled"
+                          : "table-button-text"
+                      }`}
+                      disabled={row.receivedAmount / row.requestedAmount < 100}
                     >
                       Book my Trip
                     </Button>
@@ -102,6 +114,20 @@ export default function HackerDashboard() {
           {/* <DataTable data={sponsoredData} /> */}
         </Tab>
       </Tabs>
+      <style jsx>{`
+        :global(.nextui-tabs-panel) {
+          width: 100%;
+        }
+        :global(.nextui-tabs-tablist) {
+          width: 100%;
+        }
+        :global(.nextui-tabs-tab[data-selected="true"]) {
+          background-color: white !important;
+        }
+        :global(.nextui-tabs-tab) {
+          flex: 1;
+        }
+      `}</style>
     </div>
   );
 }

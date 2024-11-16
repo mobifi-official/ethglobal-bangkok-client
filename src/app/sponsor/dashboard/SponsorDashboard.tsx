@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,140 +7,67 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Tabs,
-  Tab,
   Button,
-} from "@nextui-org/react"
-import glasses from '../../../../public/glasses_1.svg'
-import Image from "next/image"
+} from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
+import { gql, request } from "graphql-request";
+import glasses from "../../../../public/glasses_1.svg";
+import Image from "next/image";
+import { useState } from "react";
+
+export interface HackathonData {
+  name: string;
+  email?: string;
+  hacker: string;
+  githubLink: number;
+  competitionName: string;
+  requestedAmount: number;
+  receivedAmount: number;
+  totalPrize: number;
+  prizePercentageForSponsor: number;
+  sponsorList: any[];
+}
+
+export interface SponsorFundedData {
+  hacker: string;
+  sponsor: string;
+}
+
+const query = gql`
+  {
+    sponsorFundeds {
+      hacker
+      sponsor
+    }
+    hackerRegistereds(first: 5) {
+      id
+      hacker
+      competitionName
+      name
+      requestedAmount
+      totalPrize
+      prizePercentageForSponsor
+    }
+  }
+`;
+const url =
+  "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
 
 export default function SponsorDashboard() {
-  const status = 
-    {funded: "Funded", in_progress: "Trip booked and hacking in progress", reward_distributed: "Reward distributed", not_funded: "Not funded"}
-  
-  const fundraisingData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      travelBudget: "$500",
-      completeness: 100,
-      completenessProgress: 100,
-      status: status.funded,
-      numberOfSponsors: 4
+  // the data is already pre-fetched on the server and immediately available here,
+  // without an additional network call
+  const { data, isLoading } = useQuery<{
+    sponsorFundeds: SponsorFundedData[];
+    hackerRegistereds: HackathonData[];
+  }>({
+    queryKey: ["data"],
+    async queryFn() {
+      return await request(url, query);
     },
-    {
-      hackathonName: "ETHGlobal New York",
-      travelBudget: "$400",
-      completeness: 100,
-      completenessProgress: 70,
-      status: status.in_progress,
-      numberOfSponsors: 1
-    },
-    {
-      hackathonName: "ETHGlobal Paris",
-      travelBudget: "$500",
-      completeness: 100,
-      completenessProgress: 20,
-      status: status.not_funded,
-      numberOfSponsors: 0
-    },
-  ]
+  });
 
-  const sponsorsData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      hackerName: "Alice Johnson",
-      travelBudget: "$500",
-      mySponsorship: "$100",
-      completeness: 80,
-      status: "In Progress",
-      // status: status.reward_distributed,
-      rewardAmount: 50
-    },
-    {
-      hackathonName: "ETHGlobal New York",
-      hackerName: "Bob Smith",
-      travelBudget: "$400",
-      mySponsorship: "$200",
-      completeness: 100,
-      status: "Completed",
-      rewardAmount: 100
-    },
-    {
-      hackathonName: "ETHGlobal Paris",
-      hackerName: "Charlie Brown",
-      travelBudget: "$600",
-      mySponsorship: "$150",
-      completeness: 50,
-      status: "In Progress",
-      rewardAmount: 0
-    },
-  ]
-
-  const renderFundraisingTable = (data: typeof fundraisingData) => (
-    <Table aria-label="Fundraising details table" className="mt-4 bg-white">
-      <TableHeader className="table-title">
-        <TableColumn className="table-title lowercase">HACKATHON NAME</TableColumn>
-        <TableColumn className="table-title lowercase">TRAVEL BUDGET</TableColumn>
-        <TableColumn className="table-title lowercase">COMPLETENESS</TableColumn>
-        <TableColumn className="table-title lowercase">STATUS</TableColumn>
-        <TableColumn className="table-title lowercase">NUMBER OF SPONSORS</TableColumn>
-        <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index} className="table-body">
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <span>{row.completenessProgress}%</span>
-              </div>
-            </TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>{row.numberOfSponsors}</TableCell>
-            <TableCell>
-              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress === 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100}>
-                Support
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
-
-  const renderSponsorsTable = (data: typeof sponsorsData) => (
-    <Table aria-label="Sponsors details table" className="mt-4 bg-white">
-      <TableHeader className="table-title">
-        <TableColumn className="table-title lowercase">HACKATHON NAME</TableColumn>
-        <TableColumn className="table-title lowercase">HACKER NAME</TableColumn>
-        <TableColumn className="table-title lowercase">TRAVEL BUDGET</TableColumn>
-        <TableColumn className="table-title lowercase">MY SPONSORSHIP</TableColumn>
-        <TableColumn className="table-title lowercase">COMPLETENESS</TableColumn>
-        <TableColumn className="table-title lowercase">STATUS</TableColumn>
-        <TableColumn className="table-title lowercase">REWARD AMOUNT</TableColumn>
-        <TableColumn aria-label="Claim Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index} className="table-body">
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.hackerName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>{row.mySponsorship}</TableCell>
-            <TableCell>{row.completeness}%</TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>${row.rewardAmount}</TableCell>
-            <TableCell>
-              <Button size="sm" className={`shadow-md bg-white rounded-full px-8 ${row.rewardAmount < 1 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.rewardAmount < 1}>
-                Claim
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
+    return <div>No data available</div>;
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
@@ -148,18 +75,58 @@ export default function SponsorDashboard() {
         <Image src={glasses} height={18} width={30} alt="glasses" />
         <h1 className="table-title">Hackers that need your help!</h1>
       </div>
-      <div>
-                  {renderFundraisingTable(fundraisingData)}
-      </div>
-      
-      {/* <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
-        <Tab key="fundraising" title="My Fundraising Trip" className="font-londrina">
-
-        </Tab>
-        {/* <Tab key="sponsors" title="My Sponsored Hackathons" className="font-londrina">
-          {renderSponsorsTable(sponsorsData)}
-        </Tab> */}
-      {/* </Tabs> */}
+      {isLoading ? (
+        <div>Loading....</div>
+      ) : (
+        <Table aria-label="Sponsors details table" className="mt-4 bg-white">
+          <TableHeader className="table-title">
+            <TableColumn className="table-title lowercase">
+              HACKER NAME
+            </TableColumn>
+            <TableColumn className="table-title lowercase">
+              HACKATHON NAME
+            </TableColumn>
+            <TableColumn className="table-title lowercase">
+              REQUESTED AMOUNT
+            </TableColumn>
+            <TableColumn className="table-title lowercase">
+              REWARD AMOUNT
+            </TableColumn>
+            <TableColumn aria-label="Claim Column">{""}</TableColumn>
+          </TableHeader>
+          {data && (
+            <TableBody>
+              {data &&
+                data?.hackerRegistereds?.map((row, index) => (
+                  <TableRow key={index} className="table-body">
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.competitionName}</TableCell>
+                    <TableCell>{row.requestedAmount}</TableCell>
+                    <TableCell>
+                      {(row.totalPrize *
+                        (row.prizePercentageForSponsor / 100)) /
+                        Math.pow(10, 18)}{" "}
+                      ETH
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className={`shadow-md bg-white rounded-full px-8 ${
+                          row.totalPrize < 1
+                            ? "table-button-text-disabled"
+                            : "table-button-text"
+                        }`}
+                        disabled={row.totalPrize < 1}
+                      >
+                        Claim
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          )}
+        </Table>
+      )}
     </div>
-  )
+  );
 }

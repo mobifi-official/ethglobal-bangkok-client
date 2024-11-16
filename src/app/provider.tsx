@@ -5,9 +5,11 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 import { WagmiProvider } from "wagmi";
 import { useEffect, useState } from "react";
 import { config } from "./features/web3/wagmi/config/wagmi-config";
+import { Session } from "next-auth";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -36,17 +38,25 @@ function getQueryClient() {
 }
 // Context providers for various application functionalities
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  session,
+  children,
+}: {
+  session: Session | null;
+  children: React.ReactNode;
+}) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   const queryClient = getQueryClient();
 
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        {mounted && children}
-      </QueryClientProvider>
-    </WagmiProvider>
+    <SessionProvider session={session}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          {mounted && children}
+        </QueryClientProvider>
+      </WagmiProvider>
+    </SessionProvider>
   );
 }

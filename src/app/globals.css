@@ -26,3 +26,12 @@ body {
 .table-title{
   @apply font-londrina text-[18px] text-[#1A1A1A];
 }
+
+.table-button-text {
+  font-weight: 900;
+  font-family: londrina;
+  font-size: 18px;
+  line-height: 24px;
+
+  @apply font-londrina;
+}

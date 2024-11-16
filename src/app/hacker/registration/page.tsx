@@ -40,7 +40,6 @@ const HackerRegistration = () => {
       );
 
       console.log(`===>[[SUCCESSFULLY-CALLED-REGISTER-HACKER]]<===`);
-      onOpen();
     } catch (error: any) {
       console.error("Error calling smart contract:", error);
       alert(error.message);
@@ -73,11 +72,12 @@ const HackerRegistration = () => {
     console.log("Form submitted:", form);
 
     registerHacker();
+    onOpen();
   };
 
   return (
-    <div className="min-h-screen m-auto p-[20px] max-w-[600px] bg-white">
-      <h1 className="text-3xl mb-10 font-bold">Hacker Registration</h1>
+    <div className="m-auto p-[20px] max-w-5xl bg-white">
+      {/* <h1 className="text-3xl mb-10 font-bold">Hacker Registration</h1> */}
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <div className="flex items-center gap-2">
           <Image
@@ -86,7 +86,7 @@ const HackerRegistration = () => {
             width={50}
             height={50}
           />
-          <h2>Hacker Detail</h2>
+          <h2 className="font-londrina text-2xl">Hacker Detail</h2>
         </div>
         <Input
           label="Name"
@@ -121,7 +121,7 @@ const HackerRegistration = () => {
             width={50}
             height={50}
           />
-          <h2>Founding Detail</h2>
+          <h2 className="font-londrina text-2xl">Founding Detail</h2>
         </div>
 
         <Input

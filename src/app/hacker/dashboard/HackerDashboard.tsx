@@ -83,7 +83,7 @@ export default function HackerDashboard() {
   console.log("data here", data)
 
 
-  // if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
     data?.sponsorFundeds?.filter(
@@ -264,7 +264,7 @@ export default function HackerDashboard() {
               <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
             </TableHeader>
             <TableBody>
-              {data.hackerRegistereds.map((row, index) => (
+              {data && data?.hackerRegistereds?.map((row, index) => (
                 <TableRow key={index} className="table-body">
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.competitionName}</TableCell>

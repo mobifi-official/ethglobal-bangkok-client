@@ -13,7 +13,7 @@ import LoginStatusComponent from "../features/authentication/components/LoginSta
 
 export default function AppBar() {
   return (
-    <Navbar className="h-[170px]">
+    <Navbar className="h-[100px]">
       <NavbarBrand>
         <Link href="/">
           <Image src="/glasses_0.svg" alt="logo" width={170} height={170} />
@@ -27,11 +27,10 @@ export default function AppBar() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Button
-            className="font-bold bg-white drop-shadow-lg text-xl px-5 py-2 font-londrina"
-            href="/hacker/registration"
-          >
-            Fund My Trip
+          <Button className="font-bold bg-white drop-shadow-lg px-5 py-2 font-londrina">
+            <Link className="text-black text-xl" href="/hacker/registration">
+              Fund My Trip
+            </Link>
           </Button>
         </NavbarItem>
         <NavbarItem>

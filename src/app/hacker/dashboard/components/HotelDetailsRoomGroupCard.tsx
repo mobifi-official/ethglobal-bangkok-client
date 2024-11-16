@@ -180,7 +180,7 @@ useEffect(() => {
                       {props.hotelStayDescription}
                     </p>
                     <div className="h-[8px]" />
-                    <Button
+                    {/* <Button
                       onClick={async () => {
                         // const searchSpecifications = props.searchSpecifications;
                         // const targetGuests = (
@@ -199,7 +199,7 @@ useEffect(() => {
                       className="rounded-full bg-primary-brand"
                     >
                       Support
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </div>

@@ -9,6 +9,10 @@ import {
 
 const query = gql`
   {
+    sponsorFundeds {
+      hacker
+      sponsor
+    }
     hackerRegistereds(first: 5) {
       id
       hacker
@@ -17,6 +21,7 @@ const query = gql`
       requestedAmount
       receivedAmount
       prizePercentageForSponsor
+      totalPrize
     }
   }
 `;

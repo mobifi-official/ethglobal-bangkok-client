@@ -7,16 +7,26 @@ import {
   SPONSORED_HACKER_CONTRACT_ABI,
 } from "../lib/chainlink/contracts/sponsored-hacker-contract";
 
-import { useEthersSigner } from "../features/web3/hooks/useEthersSigner";
-import { useAccount } from "@particle-network/connectkit";
-import LoginButton from "../features/authentication/components/LoginButton";
 import LoginStatusComponent from "../features/authentication/components/LoginStatusComponent";
 import { fetchSource } from "../lib/chainlink/utils/chainlink-utils";
+import { useAccount } from "wagmi";
+import { useEthersSigner } from "../features/web3/wagmi/hooks/useEthersSigner";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 const Home: React.FC = () => {
-  const [result, setResult] = useState<string | null>(null);
-  const { signer } = useEthersSigner();
+  const signer = useEthersSigner();
   const { address } = useAccount();
+  22;
+
+  const router = useRouter();
+
   useEffect(() => {
     const listenToResponseEvent = async () => {
       const provider = new ethers.JsonRpcProvider(
@@ -36,7 +46,7 @@ const Home: React.FC = () => {
         alert(`SOME RESPONSE RECEIVED!`);
         console.log("Event Received:");
         console.log("Request ID:", requestId);
-  
+
         console.log("RAW-RESPONSE", ethers.toUtf8String(response));
         console.log("Error:", ethers.toUtf8String(err));
       });
@@ -64,10 +74,7 @@ const Home: React.FC = () => {
       const source = await fetchSource({ fileName: "test-get-source.js" });
       console.log("Fetched source:", source);
 
-       await contract.sendRequest(source, subscriptionID, [
-        "1",
-      ]);
-   
+      await contract.sendRequest(source, subscriptionID, ["1"]);
     } catch (error: any) {
       console.error("Error calling smart contract:", error);
       alert(error.message);
@@ -75,18 +82,37 @@ const Home: React.FC = () => {
   };
 
   return (
-    <main className="flex flex-col min-h-screen bg-[#F6F6F6]">
-      <p className="text-black">Smart Contract Interaction</p>
-      <LoginStatusComponent />
-      <p className="text-black">{`Connected To: ${address}`}</p>
-
-      {address && (
-        <button onClick={callExternalAPI} className="text-black">
-          Call Function
-        </button>
-      )}
-      {address && result && <p className="text-black">Result: {result}</p>}
-    </main>
+    <div className="flex flex-col min-h-screen items-center justify-center bg-gradient-to-br from-[#E0E7FF] to-[#F6F6F6]">
+      <Card className="w-full max-w-md" isHoverable isPressable>
+        <CardHeader>
+          <p className="text-center">Smart Contract Interaction</p>
+        </CardHeader>
+        <CardBody>
+          <LoginStatusComponent />
+          <p className="mt-4">{`Connected To: ${
+            address || "Not connected"
+          }`}</p>
+          {address && (
+            <>
+              <Button className="mt-4" size="lg" onClick={callExternalAPI}>
+                Call Function
+              </Button>
+              <Button
+                className="mt-4"
+                size="lg"
+                color="primary"
+                onClick={() => router.push("hacker/registration")}
+              >
+                Register Hacker
+              </Button>
+            </>
+          )}
+        </CardBody>
+        <CardFooter className="flex justify-center">
+          <p>Powered by Chainlink & Ethers.js</p>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

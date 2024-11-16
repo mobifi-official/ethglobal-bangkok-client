@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  useAccount,
-  useConnect,
-  useDisconnect,
-} from "@particle-network/connectkit";
+
+import { useAccount, useDisconnect } from "wagmi";
 import LoginButton from "./LoginButton";
 
 export default function LoginStatusComponent() {

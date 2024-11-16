@@ -84,11 +84,8 @@ const HotelDetailsRoomsSection = ({
     setFilteredRates(filtered);
   }, [selectedFilters, rooms]);
 
-  console.log("rooms--------", rooms)
 
   const groupedRates = groupRatesByRoomType(filteredRates);
-
-  console.log("room groups here", groupedRates)
 
 
   return (

@@ -16,6 +16,7 @@ import {
 } from "@nextui-org/react";
 
 export interface HackathonData {
+  totalPrize: number;
   name: string;
   email?: string;
   hacker: string;
@@ -46,6 +47,7 @@ const query = gql`
       requestedAmount
       receivedAmount
       prizePercentageForSponsor
+      totalPrize
     }
   }
 `;
@@ -69,6 +71,8 @@ export default function HackerDashboard() {
     },
   });
 
+  console.log("data here---------------", data)
+
   if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
     return <div>No data available</div>;
 
@@ -85,94 +89,6 @@ export default function HackerDashboard() {
     setOpen(false);
   };
 
-  const status = {
-    funded: "Funded",
-    in_progress: "Trip booked and hacking in progress",
-    reward_distributed: "Reward distributed",
-    not_funded: "Not funded",
-  };
-
-  const sponsorsData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      hackerName: "Alice Johnson",
-      travelBudget: "$500",
-      mySponsorship: "$100",
-      completeness: 80,
-      status: "In Progress",
-      // status: status.reward_distributed,
-      rewardAmount: 50,
-    },
-    {
-      hackathonName: "ETHGlobal New York",
-      hackerName: "Bob Smith",
-      travelBudget: "$400",
-      mySponsorship: "$200",
-      completeness: 100,
-      status: "Completed",
-      rewardAmount: 100,
-    },
-    {
-      hackathonName: "ETHGlobal Paris",
-      hackerName: "Charlie Brown",
-      travelBudget: "$600",
-      mySponsorship: "$150",
-      completeness: 50,
-      status: "In Progress",
-      rewardAmount: 0,
-    },
-  ];
-
-  const renderSponsorsTable = (data: typeof sponsorsData) => (
-    <Table aria-label="Sponsors details table" className="mt-4 bg-white">
-      <TableHeader className="table-title">
-        <TableColumn className="table-title lowercase">
-          HACKATHON NAME
-        </TableColumn>
-        <TableColumn className="table-title lowercase">HACKER NAME</TableColumn>
-        <TableColumn className="table-title lowercase">
-          TRAVEL BUDGET
-        </TableColumn>
-        <TableColumn className="table-title lowercase">
-          MY SPONSORSHIP
-        </TableColumn>
-        <TableColumn className="table-title lowercase">
-          COMPLETENESS
-        </TableColumn>
-        <TableColumn className="table-title lowercase">STATUS</TableColumn>
-        <TableColumn className="table-title lowercase">
-          REWARD AMOUNT
-        </TableColumn>
-        <TableColumn aria-label="Claim Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index} className="table-body">
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.hackerName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>{row.mySponsorship}</TableCell>
-            <TableCell>{row.completeness}%</TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>${row.rewardAmount}</TableCell>
-            <TableCell>
-              <Button
-                size="sm"
-                className={`shadow-md bg-white rounded-full px-8 ${
-                  row.rewardAmount < 1
-                    ? "table-button-text-disabled"
-                    : "table-button-text"
-                }`}
-                disabled={row.rewardAmount < 1}
-              >
-                Claim
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
 
   return (
     <>
@@ -231,7 +147,7 @@ export default function HackerDashboard() {
                                   ? "table-button-text-disabled"
                                   : "table-button-text"
                               }`}
-                              // disabled={row.receivedAmount / row.requestedAmount < 100}
+                              disabled={row.receivedAmount / row.requestedAmount < 100}
                               onClick={handleOpen}
                             >
                               Book my Trip
@@ -249,7 +165,61 @@ export default function HackerDashboard() {
             title="My Sponsored Hackathons"
             className="font-londrina"
           >
-            {renderSponsorsTable(sponsorsData)}
+                          <Table
+                aria-label="Hackathon details table"
+                className="mt-4 bg-white"
+              >
+                <TableHeader className="table-title">
+                  <TableColumn className="table-title lowercase">
+                    HACKER NAME
+                  </TableColumn>
+                  <TableColumn className="table-title lowercase">
+                    HACKERTHON NAME
+                  </TableColumn>
+                  <TableColumn className="table-title lowercase">
+                    TRAVEL BUDGET
+                  </TableColumn>
+                  <TableColumn className="table-title lowercase">
+                    MY SPONSORSHIP
+                  </TableColumn>
+                  <TableColumn className="table-title lowercase">
+                    REWARD AMOUNT
+                  </TableColumn>
+                  <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
+                </TableHeader>
+                {data && (
+                  <TableBody>
+                    {data &&
+                      data?.hackerRegistereds?.map((row, index) => (
+                        <TableRow key={index} className="table-body">
+                          <TableCell>{row.name}</TableCell>
+                          <TableCell>{row.competitionName}</TableCell>
+                          <TableCell>{row.requestedAmount}</TableCell>
+                          <TableCell>
+                            {row.receivedAmount}
+                          </TableCell>
+                          <TableCell>
+                            {row.totalPrize}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              className={` shadow-md bg-white ${
+                                row.receivedAmount < 1
+                                  ? "table-button-text-disabled"
+                                  : "table-button-text"
+                              }`}
+                              disabled={row.totalPrize < 1}
+                              // onClick={handleOpen}
+                            >
+                              Claim
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                )}
+              </Table>
           </Tab>
         </Tabs>
         <style jsx>{`

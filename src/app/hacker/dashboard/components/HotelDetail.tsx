@@ -42,7 +42,6 @@ const HotelDetail = () => {
     fetchHotelDetails()
   }, [baseUrl, hotelId])
 
-  console.log("info details", details?.availability)
 
   if (!details.info || !details.availability) {
     return <div>Loading...</div>

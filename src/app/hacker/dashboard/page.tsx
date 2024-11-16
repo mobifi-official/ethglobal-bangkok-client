@@ -21,6 +21,7 @@ const query = gql`
       requestedAmount
       receivedAmount
       prizePercentageForSponsor
+      totalPrize
     }
   }
 `;

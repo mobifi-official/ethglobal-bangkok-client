@@ -13,32 +13,8 @@ import {
 } from "@nextui-org/react"
 import glasses from '../../../../public/glasses_1.svg'
 import Image from "next/image"
-import { 
-  IconButton, 
-  Badge, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Typography,
-  Divider 
-} from '@mui/material'
-import { useState } from "react"
-import HotelDetail from "./components/HotelDetail"
 
-export default function HackerDashboard() {
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+export default function SponsorDashboard() {
   const status = 
     {funded: "Funded", in_progress: "Trip booked and hacking in progress", reward_distributed: "Reward distributed", not_funded: "Not funded"}
   
@@ -123,16 +99,9 @@ export default function HackerDashboard() {
             <TableCell>{row.status}</TableCell>
             <TableCell>{row.numberOfSponsors}</TableCell>
             <TableCell>
-              {row.status ===status.funded || row.status === status.not_funded ? (
-              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100} onClick={handleOpen}>
-                Book the Trip
+              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress === 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100}>
+                Support
               </Button>
-              ) : (
-              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100}>
-                Claim
-              </Button>
-              )}
-              
             </TableCell>
           </TableRow>
         ))}
@@ -174,52 +143,23 @@ export default function HackerDashboard() {
   )
 
   return (
-    <>
-        <div className="w-full max-w-7xl mx-auto p-6">
+    <div className="w-full max-w-7xl mx-auto p-6">
       <div className="flex flex-row gap-2 items-center justify-start p-4">
         <Image src={glasses} height={18} width={30} alt="glasses" />
-        <h1 className="table-title">Trip and Sponsorships</h1>
+        <h1 className="table-title">Hackers that need your help!</h1>
+      </div>
+      <div>
+                  {renderFundraisingTable(fundraisingData)}
       </div>
       
-      <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth classNames={{tab: "bg-white"}}>
+      {/* <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
         <Tab key="fundraising" title="My Fundraising Trip" className="font-londrina">
-          {renderFundraisingTable(fundraisingData)}
-        </Tab>
-        <Tab key="sponsors" title="My Sponsored Hackathons" className="font-londrina">
-          {renderSponsorsTable(sponsorsData)}
-        </Tab>
-      </Tabs>
-      <style jsx>{`
-        :global(.nextui-tabs-panel) {
-          width: 100%;
-        }
-        :global(.nextui-tabs-tablist) {
-          width: 100%;
-        }
-        :global(.nextui-tabs-tab[data-selected=true]) {
-          background-color: white !important;
-        }
-        :global(.nextui-tabs-tab) {
-          flex: 1;
-        }
-      `}</style>
-    </div>
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        {/* <DialogTitle className="text-[18px] font-londrina">Trips and Sponsorships</DialogTitle> */}
-        <DialogContent>
-          <div className="flex flex-col justify-between h-80">
-            {/* <p className="text-[100px] font-bold font-londrina whitespace-nowrap">Test Hotel Info</p> */}
-            <HotelDetail />
-            <div className="flex justify-center">
-              <Button size="sm" className={`shadow-md bg-white rounded-full px-8 font-londrina w-auto`}>
-                Confirm
-              </Button>
-            </div>
-            
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
 
+        </Tab>
+        {/* <Tab key="sponsors" title="My Sponsored Hackathons" className="font-londrina">
+          {renderSponsorsTable(sponsorsData)}
+        </Tab> */}
+      {/* </Tabs> */}
+    </div>
   )
 }

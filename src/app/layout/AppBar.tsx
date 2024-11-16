@@ -11,7 +11,6 @@ import {
 import Image from "next/image";
 import LoginStatusComponent from "../features/authentication/components/LoginStatusComponent";
 import NotificationModal from "./NotificationList";
-import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 
@@ -44,9 +43,11 @@ export default function AppBar() {
           </Button>
           
         </NavbarItem>
+        {address && (
         <NavbarItem>
           <NotificationModal userAddress={address} />
         </NavbarItem>
+        )}
         <NavbarItem>
           <LoginStatusComponent />
         </NavbarItem>

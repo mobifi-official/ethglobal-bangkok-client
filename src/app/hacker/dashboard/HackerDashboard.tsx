@@ -81,9 +81,9 @@ export default function HackerDashboard() {
   });
 
 
-  // if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
-  //   <div>No data available</div>
-  // );
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
+    <div>No data available</div>
+  );
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
     data?.sponsorFundeds?.filter(
@@ -185,7 +185,7 @@ export default function HackerDashboard() {
             <TableCell>
               {row.status ===status.funded || row.status === status.not_funded ? (
               <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress !== 100 ? "table-button-text-disabled" : "table-button-text"}`}  onClick={handleOpen}> 
-              {/* disabled={row.completenessProgress !== 100} */}
+              disabled={row.completenessProgress !== 100}
                 Book the Trip
               </Button>
               ) : (

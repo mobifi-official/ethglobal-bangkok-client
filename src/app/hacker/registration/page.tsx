@@ -5,7 +5,9 @@ import { Input, Button, Textarea } from "@nextui-org/react";
 import { getHackathonCrowdFundingContract } from "@/app/lib/chainlink/contracts/hackathon-crowd-funding";
 import { useEthersSigner } from "@/app/features/web3/wagmi/hooks/useEthersSigner";
 import { ethers } from "ethers";
+import { useDisclosure } from "@nextui-org/react";
 import Image from "next/image";
+import ConfirmationModal from "./ConfirmationModal";
 
 const HackerRegistration = () => {
   const [form, setForm] = useState({
@@ -15,6 +17,8 @@ const HackerRegistration = () => {
     foundingGoal: "",
     rewardSharingRatio: "",
   });
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const signer = useEthersSigner();
 
@@ -36,6 +40,7 @@ const HackerRegistration = () => {
       );
 
       console.log(`===>[[SUCCESSFULLY-CALLED-REGISTER-HACKER]]<===`);
+      onOpen();
     } catch (error: any) {
       console.error("Error calling smart contract:", error);
       alert(error.message);
@@ -140,6 +145,7 @@ const HackerRegistration = () => {
         <Button type="submit" color="primary">
           Submit
         </Button>
+        <ConfirmationModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </form>
     </div>
   );

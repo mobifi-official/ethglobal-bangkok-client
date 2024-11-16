@@ -7,7 +7,6 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Progress,
   Tabs,
   Tab,
   Button,
@@ -64,12 +63,6 @@ export default function HackerDashboard() {
             <TableCell>{row.travelBudget}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                {/* <Progress
-                  aria-label="Completeness"
-                  value={row.completenessProgress}
-                  className="max-w-md"
-                  color="secondary"
-                /> */}
                 <span>{row.completenessProgress}%</span>
               </div>
             </TableCell>

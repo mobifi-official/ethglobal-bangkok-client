@@ -82,7 +82,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-gradient-to-br from-[#E0E7FF] to-[#F6F6F6]">
+    <div className="flex flex-col min-h-screen -mt-[170px] items-center justify-center">
       <Card className="w-full max-w-md" isHoverable isPressable>
         <CardHeader>
           <p className="text-center">Smart Contract Interaction</p>

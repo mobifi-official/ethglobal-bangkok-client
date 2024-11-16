@@ -1,12 +1,42 @@
-import React from 'react'
-import HackerDashboard from './HackerDashboard'
+import React from "react";
+import HackerDashboard from "./HackerDashboard";
+import { gql, request } from "graphql-request";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-const page = () => {
+const query = gql`
+  {
+    hackerRegistereds(first: 5) {
+      id
+      hacker
+      competitionName
+      name
+      requestedAmount
+      receivedAmount
+      prizePercentageForSponsor
+    }
+  }
+`;
+const url =
+  "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
+
+const page = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["data"],
+    async queryFn() {
+      return await request(url, query);
+    },
+  });
+
   return (
-    <div>
-        <HackerDashboard />
-    </div>
-  )
-}
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HackerDashboard />
+    </HydrationBoundary>
+  );
+};
 
-export default page
+export default page;

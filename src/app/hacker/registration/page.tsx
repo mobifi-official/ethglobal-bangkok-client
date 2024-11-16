@@ -5,16 +5,21 @@ import { Input, Button, Textarea } from "@nextui-org/react";
 import { getHackathonCrowdFundingContract } from "@/app/lib/chainlink/contracts/hackathon-crowd-funding";
 import { useEthersSigner } from "@/app/features/web3/wagmi/hooks/useEthersSigner";
 import { ethers } from "ethers";
+import { useDisclosure } from "@nextui-org/react";
 import Image from "next/image";
+import ConfirmationModal from "./ConfirmationModal";
 
 const HackerRegistration = () => {
   const [form, setForm] = useState({
     name: "",
+    competitionName: "",
     githubLink: "",
     email: "",
-    foundingGoal: "",
-    rewardSharingRatio: "",
+    requestedAmount: "",
+    prizePercentageForSponsor: "",
   });
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const signer = useEthersSigner();
 
@@ -24,15 +29,18 @@ const HackerRegistration = () => {
       const contract = getHackathonCrowdFundingContract(signer!);
 
       // Convert uint256 fields to appropriate format
-      const foundingGoal = ethers.toBigInt(form.foundingGoal);
-      const rewardSharingRatio = ethers.toBigInt(form.rewardSharingRatio);
+      const requestedAmount = ethers.toBigInt(form.requestedAmount);
+      const prizePercentageForSponsor = ethers.toBigInt(
+        form.prizePercentageForSponsor
+      );
 
       await contract.registerHacker(
         form.name,
+        form.competitionName,
         form.githubLink,
         form.email,
-        foundingGoal,
-        rewardSharingRatio
+        requestedAmount,
+        prizePercentageForSponsor
       );
 
       console.log(`===>[[SUCCESSFULLY-CALLED-REGISTER-HACKER]]<===`);
@@ -55,10 +63,11 @@ const HackerRegistration = () => {
     // Validation
     if (
       !form.name ||
+      !form.competitionName ||
       !form.githubLink ||
       !form.email ||
-      !form.foundingGoal ||
-      !form.rewardSharingRatio
+      !form.requestedAmount ||
+      !form.prizePercentageForSponsor
     ) {
       alert("Please fill in all fields!");
       return;
@@ -68,11 +77,12 @@ const HackerRegistration = () => {
     console.log("Form submitted:", form);
 
     registerHacker();
+    onOpen();
   };
 
   return (
-    <div className="min-h-screen m-auto p-[20px] max-w-[600px] bg-white">
-      <h1 className="text-3xl mb-10 font-bold">Hacker Registration</h1>
+    <div className="m-auto p-[20px] max-w-5xl bg-white">
+      {/* <h1 className="text-3xl mb-10 font-bold">Hacker Registration</h1> */}
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <div className="flex items-center gap-2">
           <Image
@@ -81,14 +91,23 @@ const HackerRegistration = () => {
             width={50}
             height={50}
           />
-          <h2>Hacker Detail</h2>
+          <h2 className="font-londrina text-2xl">Hacker Detail</h2>
         </div>
         <Input
-          label="Name"
+          label="Your Name"
           type="text"
           name="name"
-          placeholder="Enter your name"
+          placeholder="What's your name?"
           value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          label="Competition Name"
+          type="text"
+          name="competitionName"
+          placeholder="What competition are you entering?"
+          value={form.competitionName}
           onChange={handleChange}
           required
         />
@@ -116,30 +135,31 @@ const HackerRegistration = () => {
             width={50}
             height={50}
           />
-          <h2>Founding Detail</h2>
+          <h2 className="font-londrina text-2xl">Founding Detail</h2>
         </div>
 
         <Input
           label="Founding Goal (in USD)"
           type="number"
-          name="foundingGoal"
+          name="requestedAmount"
           placeholder="Enter the requested amount"
-          value={form.foundingGoal}
+          value={form.requestedAmount}
           onChange={handleChange}
           required
         />
         <Input
           label="Reward Sharing Ratio (%)"
           type="number"
-          name="rewardSharingRatio"
+          name="prizePercentageForSponsor"
           placeholder="Enter percentage for sponsor"
-          value={form.rewardSharingRatio}
+          value={form.prizePercentageForSponsor}
           onChange={handleChange}
           required
         />
         <Button type="submit" color="primary">
           Submit
         </Button>
+        <ConfirmationModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </form>
     </div>
   );

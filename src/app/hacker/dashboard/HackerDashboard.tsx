@@ -81,9 +81,9 @@ export default function HackerDashboard() {
   });
 
 
-  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
-    <div>No data available</div>
-  );
+  // if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
+  //   <div>No data available</div>
+  // );
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
     data?.sponsorFundeds?.filter(

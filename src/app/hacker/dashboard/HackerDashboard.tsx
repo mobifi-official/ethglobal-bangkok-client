@@ -70,7 +70,7 @@ export default function HackerDashboard() {
   // the data is already pre-fetched on the server and immediately available here,
   // without an additional network call
   const [open, setOpen] = useState(false);
-  const { data } = useQuery<{
+  const { data, isLoading } = useQuery<{
     sponsorFundeds: SponsorFundedData[];
     hackerRegistereds: HackathonData[];
   }>({
@@ -80,10 +80,10 @@ export default function HackerDashboard() {
     },
   });
 
-  console.log("data here", data)
 
-
-  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return null;
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds) return (
+    <div>No data available</div>
+  );
 
   const filteredSponsorFundeds = (hackerAddress: string) =>
     data?.sponsorFundeds?.filter(
@@ -244,7 +244,10 @@ export default function HackerDashboard() {
 
       <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
         <Tab key="fundraising" title="My Fundraising Trip">
-          <Table aria-label="Hackathon details table" className="mt-4 bg-white">
+          {isLoading ? (
+            <div>Loading....</div>
+          ) : (
+                      <Table aria-label="Hackathon details table" className="mt-4 bg-white">
             <TableHeader className="table-title">
               <TableColumn className="table-title lowercase">
                 HACKER NAME
@@ -263,7 +266,8 @@ export default function HackerDashboard() {
               </TableColumn>
               <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
             </TableHeader>
-            <TableBody>
+            {data && (
+              <TableBody>
               {data && data?.hackerRegistereds?.map((row, index) => (
                 <TableRow key={index} className="table-body">
                   <TableCell>{row.name}</TableCell>
@@ -292,7 +296,11 @@ export default function HackerDashboard() {
                 </TableRow>
               ))}
             </TableBody>
+            )}
+            
           </Table>
+          )}
+
         </Tab>
         <Tab key="sponsors" title="My Sponsored Hackathons" className="font-londrina">
           {renderSponsorsTable(sponsorsData)}

@@ -2,7 +2,11 @@ import { ethers } from "ethers";
 
 // Contract ABI and Address
 export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
-  { type: "constructor", inputs: [], stateMutability: "nonpayable" },
+  {
+    type: "constructor",
+    inputs: [],
+    stateMutability: "nonpayable",
+  },
   {
     type: "function",
     name: "acceptOwnership",
@@ -13,15 +17,39 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
   {
     type: "function",
     name: "bookingAccommodation",
-    inputs: [{ name: "args", type: "string[]", internalType: "string[]" }],
-    outputs: [],
+    inputs: [
+      {
+        name: "args",
+        type: "string[]",
+        internalType: "string[]",
+      },
+    ],
+    outputs: [
+      {
+        name: "requestId",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
     stateMutability: "nonpayable",
   },
   {
     type: "function",
     name: "bookingStatus",
-    inputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    inputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
     stateMutability: "view",
   },
   {
@@ -41,7 +69,11 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "function",
     name: "depositPrize",
     inputs: [
-      { name: "_hackerAddress", type: "address", internalType: "address" },
+      {
+        name: "_hackerAddress",
+        type: "address",
+        internalType: "address",
+      },
     ],
     outputs: [],
     stateMutability: "payable",
@@ -50,7 +82,11 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "function",
     name: "fundHacker",
     inputs: [
-      { name: "_hackerAddress", type: "address", internalType: "address" },
+      {
+        name: "_hackerAddress",
+        type: "address",
+        internalType: "address",
+      },
     ],
     outputs: [],
     stateMutability: "payable",
@@ -59,27 +95,100 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "function",
     name: "getAllHackers",
     inputs: [],
-    outputs: [{ name: "", type: "address[]", internalType: "address[]" }],
+    outputs: [
+      {
+        name: "",
+        type: "address[]",
+        internalType: "address[]",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getAllSponsors",
+    inputs: [
+      {
+        name: "_hackerAddress",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "address[]",
+        internalType: "address[]",
+      },
+    ],
     stateMutability: "view",
   },
   {
     type: "function",
     name: "hackers",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
+    inputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
     outputs: [
-      { name: "name", type: "string", internalType: "string" },
-      { name: "email", type: "string", internalType: "string" },
-      { name: "projectDescription", type: "string", internalType: "string" },
-      { name: "hackerAddress", type: "address", internalType: "address" },
-      { name: "requestedAmount", type: "uint256", internalType: "uint256" },
-      { name: "receivedAmount", type: "uint256", internalType: "uint256" },
+      {
+        name: "name",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "email",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "githubLink",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "competitionName",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "hackerAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "requestedAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "receivedAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "totalPrize",
+        type: "uint256",
+        internalType: "uint256",
+      },
       {
         name: "prizePercentageForSponsor",
         type: "uint256",
         internalType: "uint256",
       },
-      { name: "exists", type: "bool", internalType: "bool" },
-      { name: "lastRequestId", type: "bytes32", internalType: "bytes32" },
+      {
+        name: "exists",
+        type: "bool",
+        internalType: "bool",
+      },
+      {
+        name: "lastRequestId",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
     ],
     stateMutability: "view",
   },
@@ -87,9 +196,21 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "function",
     name: "handleOracleFulfillment",
     inputs: [
-      { name: "requestId", type: "bytes32", internalType: "bytes32" },
-      { name: "response", type: "bytes", internalType: "bytes" },
-      { name: "err", type: "bytes", internalType: "bytes" },
+      {
+        name: "requestId",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "response",
+        type: "bytes",
+        internalType: "bytes",
+      },
+      {
+        name: "err",
+        type: "bytes",
+        internalType: "bytes",
+      },
     ],
     outputs: [],
     stateMutability: "nonpayable",
@@ -98,17 +219,44 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "function",
     name: "owner",
     inputs: [],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
     stateMutability: "view",
   },
   {
     type: "function",
     name: "registerHacker",
     inputs: [
-      { name: "_name", type: "string", internalType: "string" },
-      { name: "_email", type: "string", internalType: "string" },
-      { name: "_projectDescription", type: "string", internalType: "string" },
-      { name: "_requestedAmount", type: "uint256", internalType: "uint256" },
+      {
+        name: "_name",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_email",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_gitHubLink",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_competitionName",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_requestedAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
       {
         name: "_prizePercentageForSponsor",
         type: "uint256",
@@ -121,21 +269,51 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
   {
     type: "function",
     name: "requestToHacker",
-    inputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
+    inputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
     stateMutability: "view",
   },
   {
     type: "function",
     name: "sponsorBalances",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    inputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
     stateMutability: "view",
   },
   {
     type: "function",
     name: "transferOwnership",
-    inputs: [{ name: "to", type: "address", internalType: "address" }],
+    inputs: [
+      {
+        name: "to",
+        type: "address",
+        internalType: "address",
+      },
+    ],
     outputs: [],
     stateMutability: "nonpayable",
   },
@@ -162,7 +340,12 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
         indexed: true,
         internalType: "bytes32",
       },
-      { name: "success", type: "bool", indexed: false, internalType: "bool" },
+      {
+        name: "success",
+        type: "bool",
+        indexed: false,
+        internalType: "bool",
+      },
     ],
     anonymous: false,
   },
@@ -201,12 +384,59 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
         indexed: true,
         internalType: "address",
       },
-      { name: "name", type: "string", indexed: false, internalType: "string" },
+      {
+        name: "name",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
+      {
+        name: "email",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
+      {
+        name: "githubLink",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
+      {
+        name: "competitionName",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
       {
         name: "requestedAmount",
         type: "uint256",
         indexed: false,
         internalType: "uint256",
+      },
+      {
+        name: "receivedAmount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "totalPrize",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "prizePercentageForSponsor",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "exists",
+        type: "bool",
+        indexed: false,
+        internalType: "bool",
       },
     ],
     anonymous: false,
@@ -215,8 +445,18 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "event",
     name: "OwnershipTransferRequested",
     inputs: [
-      { name: "from", type: "address", indexed: true, internalType: "address" },
-      { name: "to", type: "address", indexed: true, internalType: "address" },
+      {
+        name: "from",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "to",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
     ],
     anonymous: false,
   },
@@ -224,8 +464,18 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "event",
     name: "OwnershipTransferred",
     inputs: [
-      { name: "from", type: "address", indexed: true, internalType: "address" },
-      { name: "to", type: "address", indexed: true, internalType: "address" },
+      {
+        name: "from",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "to",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
     ],
     anonymous: false,
   },
@@ -252,7 +502,12 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "event",
     name: "RequestFulfilled",
     inputs: [
-      { name: "id", type: "bytes32", indexed: true, internalType: "bytes32" },
+      {
+        name: "id",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
     ],
     anonymous: false,
   },
@@ -260,7 +515,12 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     type: "event",
     name: "RequestSent",
     inputs: [
-      { name: "id", type: "bytes32", indexed: true, internalType: "bytes32" },
+      {
+        name: "id",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
     ],
     anonymous: false,
   },
@@ -289,10 +549,26 @@ export const HACKATHON_CROWDFUNDING_CONTRACT_ABI = [
     ],
     anonymous: false,
   },
-  { type: "error", name: "EmptyArgs", inputs: [] },
-  { type: "error", name: "EmptySource", inputs: [] },
-  { type: "error", name: "NoInlineSecrets", inputs: [] },
-  { type: "error", name: "OnlyRouterCanFulfill", inputs: [] },
+  {
+    type: "error",
+    name: "EmptyArgs",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "EmptySource",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "NoInlineSecrets",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "OnlyRouterCanFulfill",
+    inputs: [],
+  },
 ];
 
 const CONTRACT_ADDRESS =

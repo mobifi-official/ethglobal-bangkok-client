@@ -24,9 +24,18 @@ export default function AppBar() {
       </NavbarBrand>
 
       <NavbarContent justify="end">
+      <NavbarItem className="hidden lg:flex">
+          <Button
+            className="font-bold bg-white drop-shadow-lg font-londrina text-[25px]"
+            href="/hacker/dashboard"
+          >
+            Sponsor Hacker
+          </Button>
+          
+        </NavbarItem>
         <NavbarItem className="hidden lg:flex">
           <Button
-            className="font-bold bg-white drop-shadow-lg"
+            className="font-bold bg-white drop-shadow-lg font-londrina text-[25px]"
             href="/hacker/registration"
           >
             Fund My Trip

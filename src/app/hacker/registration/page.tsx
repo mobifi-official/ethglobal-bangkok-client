@@ -12,10 +12,11 @@ import ConfirmationModal from "./ConfirmationModal";
 const HackerRegistration = () => {
   const [form, setForm] = useState({
     name: "",
+    competitionName: "",
     githubLink: "",
     email: "",
-    foundingGoal: "",
-    rewardSharingRatio: "",
+    requestedAmount: "",
+    prizePercentageForSponsor: "",
   });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -28,15 +29,18 @@ const HackerRegistration = () => {
       const contract = getHackathonCrowdFundingContract(signer!);
 
       // Convert uint256 fields to appropriate format
-      const foundingGoal = ethers.toBigInt(form.foundingGoal);
-      const rewardSharingRatio = ethers.toBigInt(form.rewardSharingRatio);
+      const requestedAmount = ethers.toBigInt(form.requestedAmount);
+      const prizePercentageForSponsor = ethers.toBigInt(
+        form.prizePercentageForSponsor
+      );
 
       await contract.registerHacker(
         form.name,
+        form.competitionName,
         form.githubLink,
         form.email,
-        foundingGoal,
-        rewardSharingRatio
+        requestedAmount,
+        prizePercentageForSponsor
       );
 
       console.log(`===>[[SUCCESSFULLY-CALLED-REGISTER-HACKER]]<===`);
@@ -59,10 +63,11 @@ const HackerRegistration = () => {
     // Validation
     if (
       !form.name ||
+      !form.competitionName ||
       !form.githubLink ||
       !form.email ||
-      !form.foundingGoal ||
-      !form.rewardSharingRatio
+      !form.requestedAmount ||
+      !form.prizePercentageForSponsor
     ) {
       alert("Please fill in all fields!");
       return;
@@ -89,11 +94,20 @@ const HackerRegistration = () => {
           <h2 className="font-londrina text-2xl">Hacker Detail</h2>
         </div>
         <Input
-          label="Name"
+          label="Your Name"
           type="text"
           name="name"
-          placeholder="Enter your name"
+          placeholder="What's your name?"
           value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          label="Competition Name"
+          type="text"
+          name="competitionName"
+          placeholder="What competition are you entering?"
+          value={form.competitionName}
           onChange={handleChange}
           required
         />
@@ -127,18 +141,18 @@ const HackerRegistration = () => {
         <Input
           label="Founding Goal (in USD)"
           type="number"
-          name="foundingGoal"
+          name="requestedAmount"
           placeholder="Enter the requested amount"
-          value={form.foundingGoal}
+          value={form.requestedAmount}
           onChange={handleChange}
           required
         />
         <Input
           label="Reward Sharing Ratio (%)"
           type="number"
-          name="rewardSharingRatio"
+          name="prizePercentageForSponsor"
           placeholder="Enter percentage for sponsor"
-          value={form.rewardSharingRatio}
+          value={form.prizePercentageForSponsor}
           onChange={handleChange}
           required
         />

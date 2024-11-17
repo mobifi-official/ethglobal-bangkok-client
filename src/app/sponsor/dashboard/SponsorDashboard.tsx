@@ -17,6 +17,7 @@ import glasses from "../../../../public/glasses_1.svg";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Web3Provider } from "@ethersproject/providers";
+import { weiToEth } from "@/utils/converter";
 
 export interface HackathonData {
   name: string;
@@ -48,6 +49,7 @@ const query = gql`
       competitionName
       name
       requestedAmount
+      receivedAmount
       totalPrize
       prizePercentageForSponsor
     }
@@ -69,6 +71,34 @@ export default function SponsorDashboard() {
 
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [sponsoredHackers, setSponsoredHackers] = useState<HackathonData[]>([]);
+  const [donations, setDonations] = useState<{ [key: string]: number }>({});
+
+  // Handle input change for donation amount
+  const handleInputChange = (hacker: string, value: string) => {
+    setDonations((prev) => ({
+      ...prev,
+      [hacker]: parseFloat(value) || 0,
+    }));
+  };
+
+  // Handle donation submission
+  const handleDonate = async (hacker: string) => {
+    const amount = donations[hacker];
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid donation amount.");
+      return;
+    }
+
+    try {
+      // Implement donation logic here
+      // e.g., interacting with a smart contract or updating the backend
+      console.log(`Donating ${amount} ETH to ${hacker}`);
+      alert(`Successfully donated ${amount} ETH to ${hacker}`);
+    } catch (error) {
+      console.error("Error processing donation:", error);
+      alert("Failed to process the donation. Please try again.");
+    }
+  };
 
   // Connect Wallet and Fetch Address
   useEffect(() => {
@@ -131,33 +161,47 @@ export default function SponsorDashboard() {
                   REQUESTED AMOUNT
                 </TableColumn>
                 <TableColumn className="table-title lowercase">
-                  REWARD AMOUNT
+                  RECEIVED AMOUNT
                 </TableColumn>
-                <TableColumn aria-label="Claim Column">{""}</TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REWARD AMOUNT FOR YOU
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  DONATION AMOUNT
+                </TableColumn>
+                <TableColumn aria-label="Submit Column">{""}</TableColumn>
               </TableHeader>
               <TableBody>
                 {data.hackerRegistereds.map((row, index) => (
                   <TableRow key={index} className="table-body">
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.competitionName}</TableCell>
-                    <TableCell>{row.requestedAmount}</TableCell>
                     <TableCell>
-                      {(row.totalPrize *
-                        (row.prizePercentageForSponsor / 100)) /
-                        Math.pow(10, 18)}{" "}
-                      ETH
+                      {weiToEth(row.requestedAmount.toString())} ETH
+                    </TableCell>
+                    <TableCell>
+                      {weiToEth(row.receivedAmount.toString())} ETH
+                    </TableCell>
+                    <TableCell>
+                      {row.prizePercentageForSponsor}% of the prize
+                    </TableCell>
+                    <TableCell>
+                      <input
+                        type="number"
+                        placeholder="Enter amount"
+                        className="border px-2 py-1 rounded-md w-full"
+                        onChange={(e) =>
+                          handleInputChange(row.hacker, e.target.value)
+                        }
+                      />
                     </TableCell>
                     <TableCell>
                       <Button
                         size="sm"
-                        className={`shadow-md bg-white rounded-full px-8 ${
-                          row.totalPrize < 1
-                            ? "table-button-text-disabled"
-                            : "table-button-text"
-                        }`}
-                        disabled={row.totalPrize < 1}
+                        className="shadow-md bg-white rounded-full px-8 table-button-text"
+                        onClick={() => handleDonate(row.hacker)}
                       >
-                        Claim
+                        Donate
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -166,6 +210,7 @@ export default function SponsorDashboard() {
             </Table>
           )}
         </Tab>
+
         <Tab key="sponsored" title="Sponsored Hackers">
           {isLoading ? (
             <div>Loading....</div>

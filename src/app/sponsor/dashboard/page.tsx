@@ -18,6 +18,7 @@ const query = gql`
       hacker
       competitionName
       name
+      receivedAmount
       requestedAmount
       totalPrize
       prizePercentageForSponsor

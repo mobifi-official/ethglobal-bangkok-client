@@ -8,12 +8,15 @@ import {
   TableRow,
   TableCell,
   Button,
+  Tabs,
+  Tab,
 } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { gql, request } from "graphql-request";
 import glasses from "../../../../public/glasses_1.svg";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Web3Provider } from "@ethersproject/providers";
 
 export interface HackathonData {
   name: string;
@@ -54,8 +57,6 @@ const url =
   "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
 
 export default function SponsorDashboard() {
-  // the data is already pre-fetched on the server and immediately available here,
-  // without an additional network call
   const { data, isLoading } = useQuery<{
     sponsorFundeds: SponsorFundedData[];
     hackerRegistereds: HackathonData[];
@@ -66,6 +67,40 @@ export default function SponsorDashboard() {
     },
   });
 
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [sponsoredHackers, setSponsoredHackers] = useState<HackathonData[]>([]);
+
+  // Connect Wallet and Fetch Address
+  useEffect(() => {
+    const fetchWalletAddress = async () => {
+      if (typeof window !== "undefined" && window.ethereum) {
+        try {
+          const provider = new Web3Provider(window.ethereum);
+          const accounts = await provider.send("eth_requestAccounts", []);
+          setWalletAddress(accounts[0].toLowerCase());
+        } catch (error) {
+          console.error("Error connecting to wallet:", error);
+        }
+      }
+    };
+    fetchWalletAddress();
+  }, []);
+
+  // Filter Sponsored Hackers
+  useEffect(() => {
+    if (data && walletAddress) {
+      const hackerAddresses = data.sponsorFundeds
+        .filter((item) => item.sponsor.toLowerCase() === walletAddress)
+        .map((item) => item.hacker);
+
+      const filteredHackers = data.hackerRegistereds.filter((hacker) =>
+        hackerAddresses.includes(hacker.hacker)
+      );
+
+      setSponsoredHackers(filteredHackers);
+    }
+  }, [data, walletAddress]);
+
   if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
     return <div>No data available</div>;
 
@@ -75,29 +110,33 @@ export default function SponsorDashboard() {
         <Image src={glasses} height={18} width={30} alt="glasses" />
         <h1 className="table-title">Hackers that need your help!</h1>
       </div>
-      {isLoading ? (
-        <div>Loading....</div>
-      ) : (
-        <Table aria-label="Sponsors details table" className="mt-4 bg-white">
-          <TableHeader className="table-title">
-            <TableColumn className="table-title lowercase">
-              HACKER NAME
-            </TableColumn>
-            <TableColumn className="table-title lowercase">
-              HACKATHON NAME
-            </TableColumn>
-            <TableColumn className="table-title lowercase">
-              REQUESTED AMOUNT
-            </TableColumn>
-            <TableColumn className="table-title lowercase">
-              REWARD AMOUNT
-            </TableColumn>
-            <TableColumn aria-label="Claim Column">{""}</TableColumn>
-          </TableHeader>
-          {data && (
-            <TableBody>
-              {data &&
-                data?.hackerRegistereds?.map((row, index) => (
+
+      <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
+        <Tab key="stillNeed" title="Need Help">
+          {isLoading ? (
+            <div>Loading....</div>
+          ) : (
+            <Table
+              aria-label="Hackers that need help"
+              className="mt-4 bg-white"
+            >
+              <TableHeader className="table-title">
+                <TableColumn className="table-title lowercase">
+                  HACKER NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  HACKATHON NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REQUESTED AMOUNT
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REWARD AMOUNT
+                </TableColumn>
+                <TableColumn aria-label="Claim Column">{""}</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {data.hackerRegistereds.map((row, index) => (
                   <TableRow key={index} className="table-body">
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.competitionName}</TableCell>
@@ -123,10 +162,48 @@ export default function SponsorDashboard() {
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
+              </TableBody>
+            </Table>
           )}
-        </Table>
-      )}
+        </Tab>
+        <Tab key="sponsored" title="Sponsored Hackers">
+          {isLoading ? (
+            <div>Loading....</div>
+          ) : (
+            <Table aria-label="Sponsored hackers" className="mt-4 bg-white">
+              <TableHeader className="table-title">
+                <TableColumn className="table-title lowercase">
+                  HACKER NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  HACKATHON NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REQUESTED AMOUNT
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REWARD AMOUNT
+                </TableColumn>
+              </TableHeader>
+              <TableBody>
+                {sponsoredHackers.map((row, index) => (
+                  <TableRow key={index} className="table-body">
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.competitionName}</TableCell>
+                    <TableCell>{row.requestedAmount}</TableCell>
+                    <TableCell>
+                      {(row.totalPrize *
+                        (row.prizePercentageForSponsor / 100)) /
+                        Math.pow(10, 18)}{" "}
+                      ETH
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </Tab>
+      </Tabs>
     </div>
   );
 }

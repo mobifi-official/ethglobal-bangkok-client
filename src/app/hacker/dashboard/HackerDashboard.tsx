@@ -71,7 +71,7 @@ export default function HackerDashboard() {
     },
   });
 
-  console.log("data here---------------", data)
+  console.log("data here---------------", data);
 
   if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
     return <div>No data available</div>;
@@ -88,7 +88,6 @@ export default function HackerDashboard() {
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <>
@@ -147,7 +146,9 @@ export default function HackerDashboard() {
                                   ? "table-button-text-disabled"
                                   : "table-button-text"
                               }`}
-                              disabled={row.receivedAmount / row.requestedAmount < 100}
+                              disabled={
+                                row.receivedAmount / row.requestedAmount < 100
+                              }
                               onClick={handleOpen}
                             >
                               Book my Trip

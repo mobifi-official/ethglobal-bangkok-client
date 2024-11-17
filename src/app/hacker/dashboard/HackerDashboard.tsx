@@ -32,6 +32,27 @@ export interface HackathonData {
   prizePercentageForSponsor: number;
   sponsorList: any[];
 }
+
+const query = gql`
+  {
+    sponsorFundeds {
+      hacker
+      sponsor
+    }
+    hackerRegistereds(first: 5) {
+      id
+      hacker
+      competitionName
+      name
+      requestedAmount
+      receivedAmount
+      prizePercentageForSponsor
+      totalPrize
+    }
+  }
+`;
+const url =
+  "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
 export interface SponsorFundedData {
   hacker: string;
   sponsor: string;
@@ -60,6 +81,7 @@ export default function HackerDashboard() {
   const handleWithdrawSuccess = () => {
     refetch()
   }
+  console.log("data here---------------", data);
 
   if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
     return <div>No data available</div>
@@ -104,35 +126,40 @@ export default function HackerDashboard() {
                   </TableColumn>
                   <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
                 </TableHeader>
-                <TableBody>
-                  {data.hackerRegistereds.map((row, index) => (
-                    <TableRow key={index} className="table-body">
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.competitionName}</TableCell>
-                      <TableCell>{row.requestedAmount}</TableCell>
-                      <TableCell>
-                        {row.receivedAmount / row.requestedAmount}%
-                      </TableCell>
-                      <TableCell>
-                        {filteredSponsorFundeds(row.hacker)?.length}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          className={`shadow-md bg-white ${
-                            row.receivedAmount / row.requestedAmount < 100
-                              ? "table-button-text-disabled"
-                              : "table-button-text"
-                          }`}
-                          disabled={row.receivedAmount / row.requestedAmount < 100}
-                          onClick={handleOpen}
-                        >
-                          Book my Trip
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                {data && (
+                  <TableBody>
+                    {data &&
+                      data?.hackerRegistereds?.map((row, index) => (
+                        <TableRow key={index} className="table-body">
+                          <TableCell>{row.name}</TableCell>
+                          <TableCell>{row.competitionName}</TableCell>
+                          <TableCell>{row.requestedAmount}</TableCell>
+                          <TableCell>
+                            {row.receivedAmount / row.requestedAmount}%
+                          </TableCell>
+                          <TableCell>
+                            {filteredSponsorFundeds(row.hacker)?.length}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              className={` shadow-md bg-white ${
+                                row.receivedAmount / row.requestedAmount < 100
+                                  ? "table-button-text-disabled"
+                                  : "table-button-text"
+                              }`}
+                              disabled={
+                                row.receivedAmount / row.requestedAmount < 100
+                              }
+                              onClick={handleOpen}
+                            >
+                              Book my Trip
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                )}
               </Table>
             )}
           </Tab>

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,140 +7,132 @@ import {
   TableColumn,
   TableRow,
   TableCell,
+  Button,
   Tabs,
   Tab,
-  Button,
-} from "@nextui-org/react"
-import glasses from '../../../../public/glasses_1.svg'
-import Image from "next/image"
+} from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
+import { gql, request } from "graphql-request";
+import glasses from "../../../../public/glasses_1.svg";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { Web3Provider } from "@ethersproject/providers";
+import { weiToEth } from "@/utils/converter";
+
+export interface HackathonData {
+  name: string;
+  email?: string;
+  hacker: string;
+  githubLink: number;
+  competitionName: string;
+  requestedAmount: number;
+  receivedAmount: number;
+  totalPrize: number;
+  prizePercentageForSponsor: number;
+  sponsorList: any[];
+}
+
+export interface SponsorFundedData {
+  hacker: string;
+  sponsor: string;
+}
+
+const query = gql`
+  {
+    sponsorFundeds {
+      hacker
+      sponsor
+    }
+    hackerRegistereds(first: 5) {
+      id
+      hacker
+      competitionName
+      name
+      requestedAmount
+      receivedAmount
+      totalPrize
+      prizePercentageForSponsor
+    }
+  }
+`;
+const url =
+  "https://api.studio.thegraph.com/query/94957/ethbangkok/version/latest";
 
 export default function SponsorDashboard() {
-  const status = 
-    {funded: "Funded", in_progress: "Trip booked and hacking in progress", reward_distributed: "Reward distributed", not_funded: "Not funded"}
-  
-  const fundraisingData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      travelBudget: "$500",
-      completeness: 100,
-      completenessProgress: 100,
-      status: status.funded,
-      numberOfSponsors: 4
+  const { data, isLoading } = useQuery<{
+    sponsorFundeds: SponsorFundedData[];
+    hackerRegistereds: HackathonData[];
+  }>({
+    queryKey: ["data"],
+    async queryFn() {
+      return await request(url, query);
     },
-    {
-      hackathonName: "ETHGlobal New York",
-      travelBudget: "$400",
-      completeness: 100,
-      completenessProgress: 70,
-      status: status.in_progress,
-      numberOfSponsors: 1
-    },
-    {
-      hackathonName: "ETHGlobal Paris",
-      travelBudget: "$500",
-      completeness: 100,
-      completenessProgress: 20,
-      status: status.not_funded,
-      numberOfSponsors: 0
-    },
-  ]
+  });
 
-  const sponsorsData = [
-    {
-      hackathonName: "ETHGlobal BangKok",
-      hackerName: "Alice Johnson",
-      travelBudget: "$500",
-      mySponsorship: "$100",
-      completeness: 80,
-      status: "In Progress",
-      // status: status.reward_distributed,
-      rewardAmount: 50
-    },
-    {
-      hackathonName: "ETHGlobal New York",
-      hackerName: "Bob Smith",
-      travelBudget: "$400",
-      mySponsorship: "$200",
-      completeness: 100,
-      status: "Completed",
-      rewardAmount: 100
-    },
-    {
-      hackathonName: "ETHGlobal Paris",
-      hackerName: "Charlie Brown",
-      travelBudget: "$600",
-      mySponsorship: "$150",
-      completeness: 50,
-      status: "In Progress",
-      rewardAmount: 0
-    },
-  ]
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [sponsoredHackers, setSponsoredHackers] = useState<HackathonData[]>([]);
+  const [donations, setDonations] = useState<{ [key: string]: number }>({});
 
-  const renderFundraisingTable = (data: typeof fundraisingData) => (
-    <Table aria-label="Fundraising details table" className="mt-4 bg-white">
-      <TableHeader className="table-title">
-        <TableColumn className="table-title lowercase">HACKATHON NAME</TableColumn>
-        <TableColumn className="table-title lowercase">TRAVEL BUDGET</TableColumn>
-        <TableColumn className="table-title lowercase">COMPLETENESS</TableColumn>
-        <TableColumn className="table-title lowercase">STATUS</TableColumn>
-        <TableColumn className="table-title lowercase">NUMBER OF SPONSORS</TableColumn>
-        <TableColumn aria-label="Book Trip Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index} className="table-body">
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <span>{row.completenessProgress}%</span>
-              </div>
-            </TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>{row.numberOfSponsors}</TableCell>
-            <TableCell>
-              <Button size="sm" className={`shadow-md bg-white ${row.completenessProgress === 100 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.completenessProgress !== 100}>
-                Support
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
+  // Handle input change for donation amount
+  const handleInputChange = (hacker: string, value: string) => {
+    setDonations((prev) => ({
+      ...prev,
+      [hacker]: parseFloat(value) || 0,
+    }));
+  };
 
-  const renderSponsorsTable = (data: typeof sponsorsData) => (
-    <Table aria-label="Sponsors details table" className="mt-4 bg-white">
-      <TableHeader className="table-title">
-        <TableColumn className="table-title lowercase">HACKATHON NAME</TableColumn>
-        <TableColumn className="table-title lowercase">HACKER NAME</TableColumn>
-        <TableColumn className="table-title lowercase">TRAVEL BUDGET</TableColumn>
-        <TableColumn className="table-title lowercase">MY SPONSORSHIP</TableColumn>
-        <TableColumn className="table-title lowercase">COMPLETENESS</TableColumn>
-        <TableColumn className="table-title lowercase">STATUS</TableColumn>
-        <TableColumn className="table-title lowercase">REWARD AMOUNT</TableColumn>
-        <TableColumn aria-label="Claim Column">{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={index} className="table-body">
-            <TableCell>{row.hackathonName}</TableCell>
-            <TableCell>{row.hackerName}</TableCell>
-            <TableCell>{row.travelBudget}</TableCell>
-            <TableCell>{row.mySponsorship}</TableCell>
-            <TableCell>{row.completeness}%</TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>${row.rewardAmount}</TableCell>
-            <TableCell>
-              <Button size="sm" className={`shadow-md bg-white rounded-full px-8 ${row.rewardAmount < 1 ? "table-button-text-disabled" : "table-button-text"}`} disabled={row.rewardAmount < 1}>
-                Claim
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
+  // Handle donation submission
+  const handleDonate = async (hacker: string) => {
+    const amount = donations[hacker];
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid donation amount.");
+      return;
+    }
+
+    try {
+      // Implement donation logic here
+      // e.g., interacting with a smart contract or updating the backend
+      console.log(`Donating ${amount} ETH to ${hacker}`);
+      alert(`Successfully donated ${amount} ETH to ${hacker}`);
+    } catch (error) {
+      console.error("Error processing donation:", error);
+      alert("Failed to process the donation. Please try again.");
+    }
+  };
+
+  // Connect Wallet and Fetch Address
+  useEffect(() => {
+    const fetchWalletAddress = async () => {
+      if (typeof window !== "undefined" && window.ethereum) {
+        try {
+          const provider = new Web3Provider(window.ethereum);
+          const accounts = await provider.send("eth_requestAccounts", []);
+          setWalletAddress(accounts[0].toLowerCase());
+        } catch (error) {
+          console.error("Error connecting to wallet:", error);
+        }
+      }
+    };
+    fetchWalletAddress();
+  }, []);
+
+  // Filter Sponsored Hackers
+  useEffect(() => {
+    if (data && walletAddress) {
+      const hackerAddresses = data.sponsorFundeds
+        .filter((item) => item.sponsor.toLowerCase() === walletAddress)
+        .map((item) => item.hacker);
+
+      const filteredHackers = data.hackerRegistereds.filter((hacker) =>
+        hackerAddresses.includes(hacker.hacker)
+      );
+
+      setSponsoredHackers(filteredHackers);
+    }
+  }, [data, walletAddress]);
+
+  if (!data || !data.hackerRegistereds || !data.sponsorFundeds)
+    return <div>No data available</div>;
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
@@ -148,18 +140,115 @@ export default function SponsorDashboard() {
         <Image src={glasses} height={18} width={30} alt="glasses" />
         <h1 className="table-title">Hackers that need your help!</h1>
       </div>
-      <div>
-                  {renderFundraisingTable(fundraisingData)}
-      </div>
-      
-      {/* <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
-        <Tab key="fundraising" title="My Fundraising Trip" className="font-londrina">
 
+      <Tabs aria-label="Hackathon tabs" className="w-full bg-white" fullWidth>
+        <Tab key="stillNeed" title="Need Help">
+          {isLoading ? (
+            <div>Loading....</div>
+          ) : (
+            <Table
+              aria-label="Hackers that need help"
+              className="mt-4 bg-white"
+            >
+              <TableHeader className="table-title">
+                <TableColumn className="table-title lowercase">
+                  HACKER NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  HACKATHON NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REQUESTED AMOUNT
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  RECEIVED AMOUNT
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REWARD AMOUNT FOR YOU
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  DONATION AMOUNT
+                </TableColumn>
+                <TableColumn aria-label="Submit Column">{""}</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {data.hackerRegistereds.map((row, index) => (
+                  <TableRow key={index} className="table-body">
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.competitionName}</TableCell>
+                    <TableCell>
+                      {weiToEth(row.requestedAmount.toString())} ETH
+                    </TableCell>
+                    <TableCell>
+                      {weiToEth(row.receivedAmount.toString())} ETH
+                    </TableCell>
+                    <TableCell>
+                      {row.prizePercentageForSponsor}% of the prize
+                    </TableCell>
+                    <TableCell>
+                      <input
+                        type="number"
+                        placeholder="Enter amount"
+                        className="border px-2 py-1 rounded-md w-full"
+                        onChange={(e) =>
+                          handleInputChange(row.hacker, e.target.value)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="shadow-md bg-white rounded-full px-8 table-button-text"
+                        onClick={() => handleDonate(row.hacker)}
+                      >
+                        Donate
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Tab>
-        {/* <Tab key="sponsors" title="My Sponsored Hackathons" className="font-londrina">
-          {renderSponsorsTable(sponsorsData)}
-        </Tab> */}
-      {/* </Tabs> */}
+
+        <Tab key="sponsored" title="Sponsored Hackers">
+          {isLoading ? (
+            <div>Loading....</div>
+          ) : (
+            <Table aria-label="Sponsored hackers" className="mt-4 bg-white">
+              <TableHeader className="table-title">
+                <TableColumn className="table-title lowercase">
+                  HACKER NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  HACKATHON NAME
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REQUESTED AMOUNT
+                </TableColumn>
+                <TableColumn className="table-title lowercase">
+                  REWARD AMOUNT
+                </TableColumn>
+              </TableHeader>
+              <TableBody>
+                {sponsoredHackers.map((row, index) => (
+                  <TableRow key={index} className="table-body">
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.competitionName}</TableCell>
+                    <TableCell>{row.requestedAmount}</TableCell>
+                    <TableCell>
+                      {(row.totalPrize *
+                        (row.prizePercentageForSponsor / 100)) /
+                        Math.pow(10, 18)}{" "}
+                      ETH
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </Tab>
+      </Tabs>
     </div>
-  )
+  );
 }

@@ -658,3 +658,21 @@ export const makeBooking = async (
     throw error;
   }
 };
+
+export const withdrawPrize = async (signer: ethers.Signer | ethers.Provider) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      HACKATHON_CROWDFUNDING_CONTRACT_ABI,
+      signer
+    );
+
+    const tx = await contract.withdrawPrize();
+    await tx.wait();
+    console.log("Prize withdrawn successfully!");
+    return true;
+  } catch (error) {
+    console.error("Error withdrawing prize:", error);
+    return false;
+  }
+};
